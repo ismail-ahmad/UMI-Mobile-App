@@ -1,24 +1,37 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
+import * as NavigationBar from 'expo-navigation-bar';
+import { Slot } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import { useEffect } from "react";
+import { Platform, StyleSheet } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+useEffect(() => {
+  const applyAndroidNavBar = async () => {
+    try {
+      await NavigationBar.setStyle('dark');
+      await NavigationBar.setBackgroundColorAsync('black');
+    } catch (error) {
+      console.error('Failed to update navigation bar:', error);
+    }
+  };
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+  if (Platform.OS === 'android') {
+    applyAndroidNavBar();
+  }
+}, []);
+  return(
+    <SafeAreaView style={styles.LayoutFrame}>
+     <Slot />
+     <StatusBar style="light" backgroundColor='black'/>
+    </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  LayoutFrame: {
+    backgroundColor: 'black',
+    flex: 1
+    
+  }
+})
