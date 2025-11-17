@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native';
-type lineCard = {
+type LineCardProps = {
     lineName: string,
     lineStatus: string,
     lineStatusColor: string,
-    lineStatusBackgroundColor: string,
     ProductionValue: string,
+    lineStatusBackgroundColor: string,
     progressBarBackgroundColor: string,
     progressBarWidth: string | number,
     Efficiency: string,
@@ -13,7 +13,7 @@ type lineCard = {
     Alterations: string
 };
 
-export default function LineCard({lineName, lineStatus, lineStatusColor, lineStatusBackgroundColor, ProductionValue, progressBarBackgroundColor, progressBarWidth, Efficiency, OEE, Achievement, Alterations}: lineCard) {
+export default function LineCard({lineName, lineStatus, lineStatusColor, ProductionValue, lineStatusBackgroundColor, progressBarBackgroundColor, progressBarWidth, Efficiency, OEE, Achievement, Alterations}: LineCardProps): React.ReactNode {
     return(
         <View style={styles.lineContainer}>
             <View style={styles.lineHeader}>

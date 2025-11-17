@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "UMI App",
-    "slug": "UMI-Mobile-App",
+    "name": "Concept",
+    "slug": "Concept",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "",
-    "scheme": "umiapp",
+    "scheme": "Concept",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "entryPoint": "expo-router/entry",
@@ -41,7 +41,9 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-web-browser",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,

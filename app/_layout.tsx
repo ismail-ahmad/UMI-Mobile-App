@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
 useEffect(() => {
+
   const applyAndroidNavBar = async () => {
     try {
       await NavigationBar.setStyle('dark');
@@ -20,6 +21,9 @@ useEffect(() => {
     applyAndroidNavBar();
   }
 }, []);
+
+
+
   return(
     <SafeAreaView style={styles.LayoutFrame}>
      <Slot />

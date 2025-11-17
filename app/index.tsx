@@ -1,24 +1,35 @@
-import LineCard from "@/components/line-card";
-import { ScrollView, StyleSheet } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { Redirect } from 'expo-router';
+import * as SecureStore from 'expo-secure-store';
+import * as SplashScreen from 'expo-splash-screen';
+import { useEffect, useState } from 'react';
+
+SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
-  const safeArea = useSafeAreaInsets();
-  return (
-      <ScrollView contentContainerStyle={[styles.container]}>
-          {/* <KpiCard heading="Overall Achivement" kpiAchievement="39.08%" kpiProductionDetail="259,223 / 663,392 units" /> */}
-          <LineCard />
-      </ScrollView>
-  );
-}
+    const [token, setToken] = useState<boolean | null>(null);
+    useEffect(() => {
+        const checkToken = async () => {
+            const Tokens = await SecureStore.getItemAsync('activeJwt');
+            if(Tokens) {
+                //auto sign in call via token
+                //once finished calling set token to true
+              setToken(true);
+            } else {
+              setToken(false);
+            }
+          }
+        
+          checkToken();
+    }, []);
+    useEffect(() => {
+        if(token !== null) {
+            SplashScreen.hideAsync();
+        }
+    }, [token]);
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'flex-start',
-    alignItems: 'flex-start',
-    backgroundColor: '#060606',
-    flexDirection: 'column',
-    padding: 20,
-    gap: 16
-  }
-});
+        if(token === null) return null
+
+    return(
+        token ? <Redirect href='/home' /> : <Redirect href='/login' />
+    );
+}
