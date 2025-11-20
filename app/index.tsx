@@ -1,5 +1,4 @@
 import { Redirect } from 'expo-router';
-import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 
@@ -9,7 +8,8 @@ export default function Index() {
     const [token, setToken] = useState<boolean | null>(null);
     useEffect(() => {
         const checkToken = async () => {
-            const Tokens = await SecureStore.getItemAsync('activeJwt');
+            // const Tokens = await SecureStore.getItemAsync('activeJwt');
+            const Tokens = false;
             if(Tokens) {
                 //auto sign in call via token
                 //once finished calling set token to true

@@ -1,3 +1,4 @@
+import { AuthContextProvider } from '@/components/authContext';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Slot } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
@@ -25,10 +26,12 @@ useEffect(() => {
 
 
   return(
-    <SafeAreaView style={styles.LayoutFrame}>
+    <AuthContextProvider>
+      <SafeAreaView style={styles.LayoutFrame}>
      <Slot />
      <StatusBar style="light" backgroundColor='black'/>
     </SafeAreaView>
+    </AuthContextProvider>
   );
 }
 
