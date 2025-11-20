@@ -208,7 +208,6 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
 
         if(logoutResponse.message === 'sign out successful!'){
             setIsAuthenticated(false);
-            console.log(`SIGN OUT! ${JSON.stringify(logoutResponse)}`);
             await SecureStore.deleteItemAsync('activeJwt');
             await SecureStore.deleteItemAsync('refreshJwt');
             router.replace('/login');
