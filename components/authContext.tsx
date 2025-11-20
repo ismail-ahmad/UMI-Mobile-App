@@ -66,6 +66,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
 
 
     //API Call Request
+
     const apiCall = async (
         url: string,
         options: {
@@ -76,67 +77,55 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
     ) => {
 
         const activeToken = await SecureStore.getItemAsync('activeJwt');
-        //send request to the '/auth' route
-        const authResponse = await fetch('https://concept-server-production.up.railway.app/auth',
-            {
-                method: 'POST',
-                headers: { authorization: `Bearer ${activeToken}` }
-            }
-        );
-        let data;
-        try{
-            data = await authResponse.json();
-        }catch(err){
-            data = null
+        let headers;
+        if(!options.headers?.authorization){
+            headers = {
+            ...options.headers,
+            authorization: `Bearer ${activeToken}`,
         }
-        if(!data.ok){
-            //Active Token is expired
-            if(data?.statusText === 'active token expired!'){
-                const newToken = await getNewActiveToken();
-                if(!newToken){
-                    setIsAuthenticated(false);
-                    await SecureStore.deleteItemAsync('refreshJwt');
-                    await SecureStore.deleteItemAsync('activeJwt');
-                    router.replace('/login');
-                    return false;
-                }
-                //Proceed to make the actual apiCall request
-            }
-            
+        } else {
+            headers = {
+            ...options.headers
         }
-        try{
-            const activeToken = await SecureStore.getItemAsync('activeJwt');
-            //Make actual apiCall
-            let headers;
-             if(!options.headers?.authorization){
-                 headers = {
-                 ...options.headers,
-                 authorization: `Bearer ${activeToken}`,
-             }
-             } else {
-                 headers = {
-                 ...options.headers
-             }
         }
         
         const requestBody = options.body ? JSON.stringify(options.body) : undefined;
         const requestMethod = options.method;
-
-        //Actual Request call
 
         const response = await fetch(url,{
             method: requestMethod,
             headers,
             body: requestBody
         });
-        if(!response?.ok){
-            console.log(`Error while receiving response on apiCall(): ${response.status} ${response.statusText}`);
+        let data;
+        try{
+            data = await response.json();
+        }catch(err){
+            data = null
         }
 
-        return response.json();
-        }catch(err){
-            console.log(`Error while receiving response on apiCall(): ${JSON.stringify(err)}`);
+        if(!data.ok){
+            if(data?.message === 'active token expired!'){
+                const newToken = await getNewActiveToken();
+                if(newToken){
+                    //make the actual api call
+                    return apiCall(url, {method: requestMethod, headers, body: requestBody})
+                    
+                } else {
+                    setIsAuthenticated(false);
+                    await SecureStore.deleteItemAsync('refreshJwt');
+                    await SecureStore.deleteItemAsync('activeJwt');
+                    return router.replace('/login');
+                }
+            }
         }
+            return data;
+
+        //Fetch from the server
+        //Check response from the server if it's ok
+        //if response is not ok check if status is active token expired! if so fetch with url /refresh
+        //if response if error code 500 then console.log that error
+        //if response is ok then parse the response and send it back to the caller
     }
 
     //Login Request

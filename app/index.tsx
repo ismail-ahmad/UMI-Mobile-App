@@ -1,6 +1,6 @@
 import { useAuth } from '@/components/authContext';
 import { Redirect } from 'expo-router';
-// import * as SecureStore from 'expo-secure-store';
+import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
 
@@ -11,19 +11,19 @@ export default function Index() {
     const { apiCall } = useAuth();
     useEffect(() => {
         const checkToken = async () => {
-            // let Tokens = await SecureStore.getItemAsync('activeJwt');
-            let Tokens = false;
+            let Tokens = await SecureStore.getItemAsync('activeJwt');
             if(!Tokens) {
                 setToken(false);
+                return;
             }
-            const response = await apiCall('/auth', {
-                    method: 'POST'
-                }
-                );
-                if(!response){
+            const response: Response | null = await apiCall('/auth', { method: 'POST' });
+            if(response !== null){
+                let res = await response.json();
+                if(!res.ok){
                     setToken(false);
                 }
                 setToken(true);
+            }
           }
         
           checkToken();
