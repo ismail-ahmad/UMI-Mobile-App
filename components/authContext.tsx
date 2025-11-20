@@ -187,43 +187,37 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
 
     //Logout Request
     const logout = async () => {
-
-        const refresh = await SecureStore.getItemAsync('refreshJwt');
-        console.log(JSON.stringify(refresh));
-        // if(!refresh){
-        //     await SecureStore.deleteItemAsync('activeJwt');
-        //     await SecureStore.deleteItemAsync('refreshJwt');
-        //     setIsAuthenticated(false);
-        //     setIsLoading(false);
-        //     router.replace('/login');
-        //     return;
-        // }
+        let res;
+        
         try{
-            const logoutResponse = await apiCall('https://concept-server-production.up.railway.app/signout', {
+            const refresh = await SecureStore.getItemAsync('refreshJwt');
+            res = await fetch('https://concept-server-production.up.railway.app/signout', {
             method: 'POST',
             headers: { authorization: `Bearer ${refresh} `}
         });
 
-        if(!logoutResponse.ok && logoutResponse.status === 'no token found!'){
+        let logoutResponse = await res.json();
+
+
+        if(!logoutResponse.ok && logoutResponse?.message === 'no token found!'){
             setIsAuthenticated(false);
-            router.replace('/login')
-            console.warn(`Logout Error: ${logoutResponse.status}`);
+            router.replace('/login');
             await SecureStore.deleteItemAsync('activeJwt');
             await SecureStore.deleteItemAsync('refreshJwt');
         }
 
         if(logoutResponse.message === 'sign out successful!'){
             setIsAuthenticated(false);
-            router.replace('/login');
+            console.log(`SIGN OUT! ${JSON.stringify(logoutResponse)}`);
             await SecureStore.deleteItemAsync('activeJwt');
             await SecureStore.deleteItemAsync('refreshJwt');
+            router.replace('/login');
         }
         }catch(err){
             const refreshToken = await SecureStore.getItemAsync('refreshJwt');
-            const activeToken = await SecureStore.getItemAsync('activeJwt');
 
             if(refreshToken){
-                // await SecureStore.setItemAsync('discardedRefreshToken', refreshToken);
+                // await SecureStore.setItemAsync('discardedRefreshToken', refreshToken); to later use for offline logout
                 await SecureStore.deleteItemAsync('activeJwt');
                 await SecureStore.deleteItemAsync('refreshJwt');
                 return router.replace('/login');
