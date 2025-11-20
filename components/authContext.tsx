@@ -43,7 +43,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
     const getNewActiveToken = async() => {
         const refreshToken = await SecureStore.getItemAsync('refreshJwt');
         if(!refreshToken){
-            router.replace('/login'); setIsAuthenticated(false);
+            return false;
         }
             try{
                 const res = await fetch('https://concept-server-production.up.railway.app/refresh-token', {
@@ -52,9 +52,8 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                     authorization: `Bearer ${refreshToken}`
                 }
             });
-            if(!res.ok){
-                    setIsAuthenticated(false);
-                    router.replace('/login');
+            if(!res?.ok){
+                    return false;
             };
             const data = await res.json();
             await SecureStore.setItemAsync('activeJwt', data.activeJwt)
@@ -77,50 +76,67 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
     ) => {
 
         const activeToken = await SecureStore.getItemAsync('activeJwt');
-        let headers;
-        if(!options.headers?.authorization){
-            headers = {
-            ...options.headers,
-            authorization: `Bearer ${activeToken}`,
+        //send request to the '/auth' route
+        const authResponse = await fetch('https://concept-server-production.up.railway.app/auth',
+            {
+                method: 'POST',
+                headers: { authorization: `Bearer ${activeToken}` }
+            }
+        );
+        let data;
+        try{
+            data = await authResponse.json();
+        }catch(err){
+            data = null
         }
-        } else {
-            headers = {
-            ...options.headers
+        if(!data.ok){
+            //Active Token is expired
+            if(data?.statusText === 'active token expired!'){
+                const newToken = await getNewActiveToken();
+                if(!newToken){
+                    setIsAuthenticated(false);
+                    await SecureStore.deleteItemAsync('refreshJwt');
+                    await SecureStore.deleteItemAsync('activeJwt');
+                    router.replace('/login');
+                    return false;
+                }
+                //Proceed to make the actual apiCall request
+            }
+            
         }
+        try{
+            const activeToken = await SecureStore.getItemAsync('activeJwt');
+            //Make actual apiCall
+            let headers;
+             if(!options.headers?.authorization){
+                 headers = {
+                 ...options.headers,
+                 authorization: `Bearer ${activeToken}`,
+             }
+             } else {
+                 headers = {
+                 ...options.headers
+             }
         }
         
         const requestBody = options.body ? JSON.stringify(options.body) : undefined;
         const requestMethod = options.method;
+
+        //Actual Request call
 
         const response = await fetch(url,{
             method: requestMethod,
             headers,
             body: requestBody
         });
-        let data;
-        try{
-            data = await response.json();
+        if(!response?.ok){
+            console.log(`Error while receiving response on apiCall(): ${response.status} ${response.statusText}`);
+        }
+
+        return response.json();
         }catch(err){
-            data = null
+            console.log(`Error while receiving response on apiCall(): ${JSON.stringify(err)}`);
         }
-
-        if(!response.ok){
-            if(data?.statusText === 'active token expired!'){
-                const newToken = await getNewActiveToken();
-                if(newToken){
-                    //make the actual api call
-                    return apiCall(url, {method: requestMethod, headers, body: requestBody})
-                    
-                }
-            }
-        }
-            return data;
-
-        //Fetch from the server
-        //Check response from the server if it's ok
-        //if response is not ok check if status is active token expired! if so fetch with url /refresh
-        //if response if error code 500 then console.log that error
-        //if response is ok then parse the response and send it back to the caller
     }
 
     //Login Request
@@ -210,7 +226,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                 // await SecureStore.setItemAsync('discardedRefreshToken', refreshToken);
                 await SecureStore.deleteItemAsync('activeJwt');
                 await SecureStore.deleteItemAsync('refreshJwt');
-                router.replace('/login');
+                return router.replace('/login');
             }
             await SecureStore.deleteItemAsync('activeJwt');
             router.replace('/login');
