@@ -4,33 +4,32 @@ import { createContext, ReactNode, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 
 
-type loginProps = (email:string, password: string) => void;
-type apiCallProps<T = unknown> = (
+type loginProps = (email:string, password: string) => void;;
+
+
+interface AuthContextProps {
+    isAuthenticated: boolean | null;
+    isLoading: boolean | null;
+    apiCall: (
     url: string,
     options: {
         method: string,
         headers?: Record<string, string>,
         body?: string
     }
-) => Promise<T>;
-
-
-interface AuthContextProps {
-    isAuthenticated: boolean | null;
-    isLoading: boolean | null;
-    apiCall: apiCallProps;
+) => Promise<Response | null>;
     login: loginProps;
     logout: () => void ;
-    getNewActiveToken: () => unknown;
+    getNewActiveToken: () => Promise<boolean | undefined>;
 }
 
 const AuthContext = createContext<AuthContextProps>({
     isAuthenticated: null,
     isLoading: null,
-    apiCall: async (url, options) => {},
+    apiCall: async (url, options) => null,
     login: (email, password) => {},
     logout: async() => {},
-    getNewActiveToken: async() => {}
+    getNewActiveToken: async() => false
 });
 
 export const AuthContextProvider = ({children}: {children:ReactNode}) => {
@@ -46,20 +45,24 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
             return false;
         }
             try{
-                const res = await fetch('https://concept-server-production.up.railway.app/refresh-token', {
+                const refreshToken = await SecureStore.getItemAsync('refreshJwt');
+                const response = await fetch('https://concept-server-production.up.railway.app/refresh-token', {
                 method: 'POST',
                 headers: {
                     authorization: `Bearer ${refreshToken}`
                 }
             });
-            if(!res?.ok){
+            const res = await response.json();
+            console.log(JSON.stringify(res));
+            if(!res?.ok && (res.message === 'token not found!' || res.message === 'Refresh token expired!')){
                     return false;
             };
-            const data = await res.json();
-            await SecureStore.setItemAsync('activeJwt', data.activeJwt)
+
+            const newActiveJwt = res.activeJwt;
+            await SecureStore.setItemAsync('activeJwt', newActiveJwt);
             return true;
             }catch(err){
-                console.log(`Error: There was a problem connecting to the server. Please try again!`);
+                console.log(`Error: There was a problem connecting to the server. Please try again! ${JSON.stringify(err)}`);
             }
         }
 
@@ -103,19 +106,37 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
         }catch(err){
             data = null
         }
-
-        if(!data.ok){
+        console.log(data);
+        if(!data?.ok){
             if(data?.message === 'active token expired!'){
                 const newToken = await getNewActiveToken();
                 if(newToken){
                     //make the actual api call
-                    return apiCall(url, {method: requestMethod, headers, body: requestBody})
+                    const newActiveToken = await SecureStore.getItemAsync('activeJwt');
+                    let headers;
+                    if(!options.headers?.authorization){
+                        headers = {
+                        ...options.headers,
+                        authorization: `Bearer ${newActiveToken}`,
+                    }
+                    } else {
+                        headers = {
+                        ...options.headers
+                    }
+                    }
+                    
+                    return await apiCall(url, {
+                        method: requestMethod,
+                        headers,
+                        body: requestBody
+                    });
                     
                 } else {
                     setIsAuthenticated(false);
                     await SecureStore.deleteItemAsync('refreshJwt');
                     await SecureStore.deleteItemAsync('activeJwt');
-                    return router.replace('/login');
+                    router.replace('/login');
+                    return null;
                 }
             }
         }

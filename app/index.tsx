@@ -16,10 +16,9 @@ export default function Index() {
                 setToken(false);
                 return;
             }
-            const response: Response | null = await apiCall('/auth', { method: 'POST' });
+            const response = await apiCall('https://concept-server-production.up.railway.app/auth', { method: 'POST' });
             if(response !== null){
-                let res = await response.json();
-                if(!res.ok){
+                if(!response.ok){
                     setToken(false);
                 }
                 setToken(true);
