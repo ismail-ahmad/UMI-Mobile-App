@@ -4,7 +4,7 @@ import { createContext, ReactNode, useContext, useState } from 'react';
 import { Alert } from 'react-native';
 
 
-type loginProps = (email:string, password: string) => void;;
+type loginProps = (email:string, password: string) => void;
 
 
 interface AuthContextProps {

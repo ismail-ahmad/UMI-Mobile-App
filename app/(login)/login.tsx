@@ -14,7 +14,7 @@ export default function App(){
             return <Redirect href='/home' />
         }
     return(
-         <View style={styles.Container}>
+         <View style={[styles.Container, styles.LayoutFrame]}>
             <Heading text='Concept' />
             <View style={styles.fields}>
                 <FormField value={email} onChangeText={(text) => {setEmail(text.toLowerCase())}} placeHolder='Email'/>
@@ -37,5 +37,9 @@ const styles = StyleSheet.create({
     },
     fields: {
         gap: 12
-    }
+    },
+    LayoutFrame: {
+    backgroundColor: 'black'
+    
+  }
 });

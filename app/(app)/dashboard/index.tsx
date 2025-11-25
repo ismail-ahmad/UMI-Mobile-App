@@ -205,7 +205,7 @@ const Dashboard = () => {
   };
 
   return (
-    <ScrollView contentContainerStyle={[styles.container, { paddingTop: safeArea.top }]}>
+    <ScrollView contentContainerStyle={[styles.container, { paddingTop: safeArea.top + 32 }]} style={{ backgroundColor: '#060606' }}>
       <View style={styles.dateSelectorContainer}>
         <Button 
           title={isLoading ? "Loading..." : "Choose a Date Range"} 
@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     padding: 20,
     gap: 16,
-    paddingBottom: 40
+    paddingBottom: 40,
   },
   dateSelectorContainer: {
     width: '100%',

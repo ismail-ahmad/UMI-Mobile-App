@@ -11,7 +11,7 @@
     "entryPoint": "expo-router/entry",
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.ismailakhan.UMIApp"
+      "bundleIdentifier": "com.ismailakhan.UMIApp",
     },
     "android": {
       "adaptiveIcon": {

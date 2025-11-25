@@ -1,10 +1,8 @@
 import { AuthContextProvider } from '@/components/authContext';
 import * as NavigationBar from 'expo-navigation-bar';
-import { Slot } from "expo-router";
-import { StatusBar } from 'expo-status-bar';
+import { Stack } from "expo-router";
 import { useEffect } from "react";
-import { Platform, StyleSheet } from "react-native";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Platform, View } from "react-native";
 
 export default function RootLayout() {
 useEffect(() => {
@@ -27,18 +25,9 @@ useEffect(() => {
 
   return(
     <AuthContextProvider>
-      <SafeAreaView style={styles.LayoutFrame}>
-     <Slot />
-     <StatusBar style="light" backgroundColor='black'/>
-    </SafeAreaView>
+     <View style={{ flex: 1, backgroundColor: 'black'}}>{/* use this to style backgroundColor of the root View on iOS */}
+      <Stack screenOptions={{headerShown: false}} />
+     </View>
     </AuthContextProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  LayoutFrame: {
-    backgroundColor: 'black',
-    flex: 1
-    
-  }
-})
