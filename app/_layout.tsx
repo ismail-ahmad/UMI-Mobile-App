@@ -1,4 +1,5 @@
 import { AuthContextProvider } from '@/components/authContext';
+import { NetContextProvider } from '@/components/NetAuth';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Stack } from "expo-router";
 import { useEffect } from "react";
@@ -24,10 +25,13 @@ useEffect(() => {
 
 
   return(
-    <AuthContextProvider>
-     <View style={{ flex: 1, backgroundColor: 'black'}}>{/* use this to style backgroundColor of the root View on iOS */}
-      <Stack screenOptions={{headerShown: false}} />
-     </View>
+    
+      <AuthContextProvider>
+        <NetContextProvider>
+          <View style={{ flex: 1, backgroundColor: 'black'}}>{/* use this to style backgroundColor of the root View on iOS */}
+            <Stack screenOptions={{headerShown: false}} />
+          </View>
+     </NetContextProvider>
     </AuthContextProvider>
   );
 }

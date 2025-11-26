@@ -6,7 +6,7 @@ export default function Nointernet(){
     return(
         <View style={styles.container}>
           <Text style={styles.title}>No Internet</Text>
-          <Pressable onPress={() => setRefresh(true)} style={styles.refreshButton}><Text style={styles.refreshButtonText}>Refresh</Text></Pressable>
+          <Pressable onPress={() => {setRefresh(true);}} style={styles.refreshButton}><Text style={styles.refreshButtonText}>Refresh</Text></Pressable>
         </View>
     );
 }

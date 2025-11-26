@@ -1,4 +1,3 @@
-import * as Network from 'expo-network';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { createContext, ReactNode, useContext, useState } from 'react';
@@ -11,11 +10,6 @@ type loginProps = (email:string, password: string) => void;
 interface AuthContextProps {
     isAuthenticated: boolean | null;
     isLoading: boolean | null;
-    isConnected: boolean | undefined;
-    isInternetReachable: boolean | undefined;
-    refresh: boolean;
-    load: () => Promise<void>;
-    setRefresh: (refresh: boolean) => void;
     apiCall: (
     url: string,
     options: {
@@ -32,11 +26,6 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
     isAuthenticated: null,
     isLoading: null,
-    isConnected: undefined,
-    isInternetReachable: undefined,
-    refresh: false,
-    setRefresh: () => {},
-    load: async() => {},
     apiCall: async (url, options) => null,
     login: (email, password) => {},
     logout: async() => {},
@@ -54,14 +43,6 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
     const [refresh, setRefresh] = useState<boolean>(true);
 
 
-    const load = async():Promise<void> => {
-            const network = await  Network.getNetworkStateAsync();
-            setIsConnect(() => network.isConnected);
-            setIsInternetReachable(() => network.isInternetReachable);
-            console.log(isConnected, isInternetReachable);
-        };
-
-
     const getNewActiveToken = async() => {
         const refreshToken = await SecureStore.getItemAsync('refreshJwt');
         if(!refreshToken){
@@ -76,9 +57,9 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                 }
             });
             const res = await response.json();
-            console.log('reached here!');
             if(!res?.ok && (res.message === 'token not found!' || res.message === 'Refresh token expired!')){
-                    return false;
+                console.log('reached here!');
+                return false;
             };
 
             const newActiveJwt = res.activeJwt;
@@ -161,6 +142,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                     await SecureStore.deleteItemAsync('refreshJwt');
                     await SecureStore.deleteItemAsync('activeJwt');
                     router.replace('/login');
+                    console.log("Return null and move to login!");
                     return null;
                 }
             }
@@ -262,7 +244,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
     }
 
     return(
-        <AuthContext.Provider value={{isAuthenticated, isLoading, isConnected, isInternetReachable, refresh, setRefresh, load, apiCall, login, logout, getNewActiveToken}}>
+        <AuthContext.Provider value={{isAuthenticated, isLoading, apiCall, login, logout, getNewActiveToken}}>
             {children}
         </AuthContext.Provider>
     );

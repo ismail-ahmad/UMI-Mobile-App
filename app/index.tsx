@@ -1,3 +1,4 @@
+import { useNetAuth } from '@/components/NetAuth';
 import { useAuth } from '@/components/authContext';
 import { Redirect, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
@@ -9,13 +10,16 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
     const [token, setToken] = useState<boolean | null>(null);
-    const { apiCall, isConnected, setRefresh, isInternetReachable, load, refresh } = useAuth();
+    const { setRefresh, load, refresh } = useNetAuth();
+    const [isConnected, setIsConnect] = useState<boolean | undefined> (undefined);
+    const [isInternetReachable, setIsInternetReachable] = useState<boolean | undefined> (undefined);
+    const { apiCall } = useAuth();
     const router = useRouter();
 
 
     useEffect(() => {
     load();
-    },[refresh]);
+    },[]);
 
     useEffect(() => {
         if(isConnected === false){
@@ -30,7 +34,6 @@ export default function Index() {
             Alert.alert('Network Error!', 'Internet is inaccessible');
             setRefresh(false);
         } else {
-            console.log(isConnected, isInternetReachable);
             const checkToken = async () => {
             let Tokens = await SecureStore.getItemAsync('activeJwt');
             if(!Tokens) {
