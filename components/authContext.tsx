@@ -1,3 +1,4 @@
+import * as Network from 'expo-network';
 import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { createContext, ReactNode, useContext, useState } from 'react';
@@ -10,6 +11,11 @@ type loginProps = (email:string, password: string) => void;
 interface AuthContextProps {
     isAuthenticated: boolean | null;
     isLoading: boolean | null;
+    isConnected: boolean | undefined;
+    isInternetReachable: boolean | undefined;
+    refresh: boolean;
+    load: () => Promise<void>;
+    setRefresh: (refresh: boolean) => void;
     apiCall: (
     url: string,
     options: {
@@ -26,6 +32,11 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
     isAuthenticated: null,
     isLoading: null,
+    isConnected: undefined,
+    isInternetReachable: undefined,
+    refresh: false,
+    setRefresh: () => {},
+    load: async() => {},
     apiCall: async (url, options) => null,
     login: (email, password) => {},
     logout: async() => {},
@@ -38,6 +49,18 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
     const [isLoading, setIsLoading] = useState<boolean | null>(null);
+    const [isConnected, setIsConnect] = useState<boolean | undefined> (undefined);
+    const [isInternetReachable, setIsInternetReachable] = useState<boolean | undefined> (undefined);
+    const [refresh, setRefresh] = useState<boolean>(true);
+
+
+    const load = async():Promise<void> => {
+            const network = await  Network.getNetworkStateAsync();
+            setIsConnect(() => network.isConnected);
+            setIsInternetReachable(() => network.isInternetReachable);
+            console.log(isConnected, isInternetReachable);
+        };
+
 
     const getNewActiveToken = async() => {
         const refreshToken = await SecureStore.getItemAsync('refreshJwt');
@@ -53,7 +76,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                 }
             });
             const res = await response.json();
-            console.log(JSON.stringify(res));
+            console.log('reached here!');
             if(!res?.ok && (res.message === 'token not found!' || res.message === 'Refresh token expired!')){
                     return false;
             };
@@ -110,6 +133,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
         if(!data?.ok){
             if(data?.message === 'active token expired!'){
                 const newToken = await getNewActiveToken();
+                console.log(newToken);
                 if(newToken){
                     //make the actual api call
                     const newActiveToken = await SecureStore.getItemAsync('activeJwt');
@@ -132,6 +156,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                     });
                     
                 } else {
+                    
                     setIsAuthenticated(false);
                     await SecureStore.deleteItemAsync('refreshJwt');
                     await SecureStore.deleteItemAsync('activeJwt');
@@ -237,7 +262,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
     }
 
     return(
-        <AuthContext.Provider value={{isAuthenticated, isLoading, apiCall, login, logout, getNewActiveToken}}>
+        <AuthContext.Provider value={{isAuthenticated, isLoading, isConnected, isInternetReachable, refresh, setRefresh, load, apiCall, login, logout, getNewActiveToken}}>
             {children}
         </AuthContext.Provider>
     );

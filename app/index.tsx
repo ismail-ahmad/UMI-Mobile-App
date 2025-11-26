@@ -1,6 +1,5 @@
 import { useAuth } from '@/components/authContext';
-import * as Network from 'expo-network';
-import { Redirect } from 'expo-router';
+import { Redirect, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
@@ -10,32 +9,26 @@ SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
     const [token, setToken] = useState<boolean | null>(null);
-    const [isConnected, setIsConnect] = useState<boolean | undefined> (undefined);
-    const [isInternetReachable, setIsInternetReachable] = useState<boolean | undefined> (undefined);
-    const [ip, setIp] = useState<string| null>(null);
-    const { apiCall } = useAuth();
+    const { apiCall, isConnected, setRefresh, isInternetReachable, load, refresh } = useAuth();
+    const router = useRouter();
 
 
     useEffect(() => {
-        const load = async() => {
-        const network = await  Network.getNetworkStateAsync();
-        const ip = await Network.getIpAddressAsync();
-        setIp(() => ip);
-        setIsConnect(() => network.isConnected);
-        setIsInternetReachable(() => network.isInternetReachable);
-        console.log(isConnected, isInternetReachable);
-    };
     load();
-    },[]);
+    },[refresh]);
 
     useEffect(() => {
         if(isConnected === false){
             //show alert that you are disconnect
             SplashScreen.hideAsync();
+            router.replace('/nointernet');
             Alert.alert('Connection Error!', 'You are not Connected to the internet!');
+            setRefresh(false);
         } else if(isInternetReachable === false) {
             SplashScreen.hideAsync();
-            Alert.alert('Network Error!', 'Internet is not accessible!');
+            router.replace('/nointernet');
+            Alert.alert('Network Error!', 'Internet is inaccessible');
+            setRefresh(false);
         } else {
             console.log(isConnected, isInternetReachable);
             const checkToken = async () => {
