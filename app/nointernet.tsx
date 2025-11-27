@@ -1,12 +1,28 @@
-import { useAuth } from '@/components/authContext';
+import { useNetAuth } from '@/components/NetAuth';
+import { useRouter } from 'expo-router';
+import { useEffect } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 export default function Nointernet(){
-  const { setRefresh } = useAuth();
+  const router = useRouter();
+  const { load, isConnected, isInternetReachable, refresh, setRefresh } = useNetAuth();
+  const handleRefresh = () => {
+    load();
+  }
+
+  useEffect(() => {
+    if(isConnected === true && isInternetReachable === true){
+      router.replace('/');
+    } else if(isConnected === false && isInternetReachable === false){
+      // Alert.alert('Connection Error!', 'You are not Connected to the internet!');
+    } else if(isConnected === true && isInternetReachable === false) {
+      // Alert.alert('Network Error!', 'Internet is inaccessible!');
+    }
+  },[isConnected, isInternetReachable]);
     return(
         <View style={styles.container}>
           <Text style={styles.title}>No Internet</Text>
-          <Pressable onPress={() => {setRefresh(true);}} style={styles.refreshButton}><Text style={styles.refreshButtonText}>Refresh</Text></Pressable>
+          <Pressable onPress={() => {handleRefresh();}} style={styles.refreshButton}><Text style={styles.refreshButtonText}>Refresh</Text></Pressable>
         </View>
     );
 }

@@ -4,15 +4,12 @@ import { Redirect, useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect, useState } from 'react';
-import { Alert } from 'react-native';
 
 SplashScreen.preventAutoHideAsync();
 
 export default function Index() {
     const [token, setToken] = useState<boolean | null>(null);
-    const { setRefresh, load, refresh } = useNetAuth();
-    const [isConnected, setIsConnect] = useState<boolean | undefined> (undefined);
-    const [isInternetReachable, setIsInternetReachable] = useState<boolean | undefined> (undefined);
+    const { setRefresh, load, refresh, isConnected, isInternetReachable } = useNetAuth();
     const { apiCall } = useAuth();
     const router = useRouter();
 
@@ -22,18 +19,11 @@ export default function Index() {
     },[]);
 
     useEffect(() => {
-        if(isConnected === false){
+        if(isConnected === false || isInternetReachable === false){
             //show alert that you are disconnect
             SplashScreen.hideAsync();
-            router.replace('/nointernet');
-            Alert.alert('Connection Error!', 'You are not Connected to the internet!');
-            setRefresh(false);
-        } else if(isInternetReachable === false) {
-            SplashScreen.hideAsync();
-            router.replace('/nointernet');
-            Alert.alert('Network Error!', 'Internet is inaccessible');
-            setRefresh(false);
-        } else {
+            // router.replace('/nointernet');
+        }else {
             const checkToken = async () => {
             let Tokens = await SecureStore.getItemAsync('activeJwt');
             if(!Tokens) {
@@ -51,6 +41,10 @@ export default function Index() {
         
           checkToken();
         }
+    },[isConnected, isInternetReachable]);
+
+    useEffect(() => {
+        console.log(isConnected, isInternetReachable, refresh);
     },[isConnected, isInternetReachable]);
 
     useEffect(() => {
