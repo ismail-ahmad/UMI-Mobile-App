@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native';
 
 
-export default function Report(){
+export default function Admin(){
     return(
         <View style={[styles.mainView]}>
                 <Text style={[styles.text]}>Admin</Text>

@@ -58,7 +58,6 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
             });
             const res = await response.json();
             if(!res?.ok && (res.message === 'token not found!' || res.message === 'Refresh token expired!')){
-                console.log('reached here!');
                 return false;
             };
 
@@ -114,7 +113,6 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
         if(!data?.ok){
             if(data?.message === 'active token expired!'){
                 const newToken = await getNewActiveToken();
-                console.log(newToken);
                 if(newToken){
                     //make the actual api call
                     const newActiveToken = await SecureStore.getItemAsync('activeJwt');

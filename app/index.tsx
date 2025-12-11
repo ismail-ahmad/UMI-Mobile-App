@@ -22,8 +22,8 @@ export default function Index() {
         if(isConnected === false || isInternetReachable === false){
             //show alert that you are disconnect
             SplashScreen.hideAsync();
-            // router.replace('/nointernet');
-        }else {
+            return router.replace('/nointernet');
+        }else if(isInternetReachable === true) {
             const checkToken = async () => {
             let Tokens = await SecureStore.getItemAsync('activeJwt');
             if(!Tokens) {
@@ -56,6 +56,6 @@ export default function Index() {
         if(token === null) return null
 
     return(
-        token ? <Redirect href='/home' /> : <Redirect href='/login' />
+        token ? <Redirect href='/(tabs)/dashboard' /> : <Redirect href='/login' />
     );
 }

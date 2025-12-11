@@ -2,6 +2,7 @@ import { AuthContextProvider } from '@/components/authContext';
 import { NetContextProvider } from '@/components/NetAuth';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Stack } from "expo-router";
+import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
 import { Platform, View } from "react-native";
 
@@ -30,6 +31,7 @@ useEffect(() => {
         <NetContextProvider>
           <View style={{ flex: 1, backgroundColor: 'black'}}>{/* use this to style backgroundColor of the root View on iOS */}
             <Stack screenOptions={{headerShown: false}} />
+            <StatusBar style="light" />
           </View>
      </NetContextProvider>
     </AuthContextProvider>
