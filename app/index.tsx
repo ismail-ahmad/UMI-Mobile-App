@@ -56,6 +56,6 @@ export default function Index() {
         if(token === null) return null
 
     return(
-        token ? <Redirect href='/(tabs)/dashboard' /> : <Redirect href='/login' />
+        token ? <Redirect href='/dashboard' /> : <Redirect href='/login' />
     );
 }

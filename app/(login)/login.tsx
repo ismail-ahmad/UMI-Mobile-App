@@ -11,7 +11,7 @@ export default function App(){
     const [password, setPassword] = useState('');
     const { login, isAuthenticated } = useAuth();
     if(isAuthenticated) {
-            return <Redirect href='/home' />
+            return <Redirect href='/dashboard' />
         }
     return(
          <View style={[styles.Container, styles.LayoutFrame]}>
