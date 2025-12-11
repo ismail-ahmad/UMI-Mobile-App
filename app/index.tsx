@@ -31,10 +31,14 @@ export default function Index() {
                 return;
             }
             const response = await apiCall('https://concept-server-production.up.railway.app/auth', { method: 'POST' });
-            if(response !== null){
-                if(!response.ok){
+            console.log(response);
+            if(!response.ok && response.message === 'Unauthorized token!'){
                     setToken(false);
-                }
+            } else if(!response.ok && response.message === 'Invalid JSON response!'){
+                    SplashScreen.hideAsync();
+                    return router.replace('/nointernet');
+            }
+            else if(response.message === 'active token verified!') {
                 setToken(true);
             }
           }

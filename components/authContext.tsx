@@ -17,7 +17,7 @@ interface AuthContextProps {
         headers?: Record<string, string>,
         body?: string
     }
-) => Promise<Response | null>;
+) => Promise<Record<string, any> | {ok?: boolean; status?: number; message?: string;}>;
     login: loginProps;
     logout: () => void ;
     getNewActiveToken: () => Promise<boolean | undefined>;
@@ -26,7 +26,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
     isAuthenticated: null,
     isLoading: null,
-    apiCall: async (url, options) => null,
+    apiCall: async (url, options) => {return {ok: false, status: 500, message: 'Not Initialized!'} },
     login: (email, password) => {},
     logout: async() => {},
     getNewActiveToken: async() => false
@@ -95,22 +95,25 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
         }
         }
         
-        const requestBody = options.body ? JSON.stringify(options.body) : undefined;
+        const requestBody = options.body ?? undefined;
         const requestMethod = options.method;
-
-        const response = await fetch(url,{
+        let data;
+        try{
+            const response = await fetch(url,{
             method: requestMethod,
             headers,
             body: requestBody
         });
-        let data;
-        try{
             data = await response.json();
         }catch(err){
-            data = null
+            data = {
+                ok: false,
+                status: 500,
+                message: 'Invalid JSON response!'
+            }
+            return data;
         }
-        console.log(data);
-        if(!data?.ok){
+            if(!data?.ok){
             if(data?.message === 'active token expired!'){
                 const newToken = await getNewActiveToken();
                 if(newToken){
@@ -139,9 +142,7 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                     setIsAuthenticated(false);
                     await SecureStore.deleteItemAsync('refreshJwt');
                     await SecureStore.deleteItemAsync('activeJwt');
-                    router.replace('/login');
-                    console.log("Return null and move to login!");
-                    return null;
+                    return {ok: false, status: 403, message: 'Unauthorized token!'};
                 }
             }
         }
@@ -168,7 +169,8 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                     return
                 }
                 const url='https://concept-server-production.up.railway.app/signin';
-                fetch(url, {
+                try{
+                    fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -198,6 +200,9 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
                     console.log(err.message);
                     Alert.alert('Error!', 'Unable to reach the server, Please check your internet connection and try again!');
                 })
+                } catch(err){
+                    Alert.alert('Network Connection issue!', JSON.stringify(err));
+                }
     }
 
     //Logout Request
