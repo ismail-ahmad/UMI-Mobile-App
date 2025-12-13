@@ -24,7 +24,7 @@ export default function Index() {
             SplashScreen.hideAsync();
             return router.replace('/nointernet');
         }else if(isInternetReachable === true) {
-            const checkToken = async () => {
+            (async () => {
             let Tokens = await SecureStore.getItemAsync('activeJwt');
             if(!Tokens) {
                 setToken(false);
@@ -32,18 +32,16 @@ export default function Index() {
             }
             const response = await apiCall('https://concept-server-production.up.railway.app/auth', { method: 'POST' });
             console.log(response);
+            if(!response.ok && response.message === 'Network Request Failed!'){
+                    await SplashScreen.hideAsync();
+                    return;
+            }
             if(!response.ok && response.message === 'Unauthorized token!'){
                     setToken(false);
-            } else if(!response.ok && response.message === 'Invalid JSON response!'){
-                    SplashScreen.hideAsync();
-                    return router.replace('/nointernet');
-            }
-            else if(response.message === 'active token verified!') {
+            } else if(response.message === 'active token verified!') {
                 setToken(true);
             }
-          }
-        
-          checkToken();
+          })();
         }
     },[isConnected, isInternetReachable]);
 

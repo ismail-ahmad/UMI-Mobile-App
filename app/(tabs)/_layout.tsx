@@ -39,7 +39,7 @@ export default function TabsLayout(){
           }}
         />
         <Tabs.Screen
-          name="master-admin"
+          name="master_admin"
           options={{
             title: 'Admin',
             tabBarIcon: ({ color }) => <MaterialIcons size={25} name='admin-panel-settings' color={color} />

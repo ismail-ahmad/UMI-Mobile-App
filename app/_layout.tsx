@@ -1,5 +1,6 @@
 import { AuthContextProvider } from '@/components/authContext';
 import { NetContextProvider } from '@/components/NetAuth';
+import { NetworkErrorsContextProvider } from '@/components/network_errors';
 import * as NavigationBar from 'expo-navigation-bar';
 import { Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
@@ -26,7 +27,7 @@ useEffect(() => {
 
 
   return(
-    
+    <NetworkErrorsContextProvider>
       <AuthContextProvider>
         <NetContextProvider>
           <View style={{ flex: 1, backgroundColor: 'black'}}>{/* use this to style backgroundColor of the root View on iOS */}
@@ -35,5 +36,6 @@ useEffect(() => {
           </View>
      </NetContextProvider>
     </AuthContextProvider>
+    </NetworkErrorsContextProvider>
   );
 }
