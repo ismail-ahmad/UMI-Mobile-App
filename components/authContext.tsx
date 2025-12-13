@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import * as SecureStore from 'expo-secure-store';
 import { createContext, ReactNode, useContext, useState } from 'react';
 import { Alert } from 'react-native';
+import { useNetworkErrors } from './network_errors';
 
 
 type loginProps = (email:string, password: string) => void;
@@ -34,6 +35,8 @@ const AuthContext = createContext<AuthContextProps>({
 
 export const AuthContextProvider = ({children}: {children:ReactNode}) => {
 
+    //network timeout errors:
+    const { setFailedRequest } = useNetworkErrors();
     
     const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
@@ -99,19 +102,22 @@ export const AuthContextProvider = ({children}: {children:ReactNode}) => {
         const requestMethod = options.method;
         let data;
         try{
-            const response = await fetch(url,{
+            const response = await fetch(url.trim(),{
             method: requestMethod,
             headers,
             body: requestBody
         });
             data = await response.json();
         }catch(err){
+            setFailedRequest(url.trim())
+            router.replace('/request_timeout');
+            console.log(err);
             data = {
                 ok: false,
-                status: 500,
-                message: 'Invalid JSON response!'
+                status: 0,
+                message: 'Network Request Failed!'
             }
-            return data;
+            return data; // need to work on in the future for better error handling, right now loose error handling
         }
             if(!data?.ok){
             if(data?.message === 'active token expired!'){
