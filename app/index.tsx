@@ -46,10 +46,6 @@ export default function Index() {
     },[isConnected, isInternetReachable]);
 
     useEffect(() => {
-        console.log(isConnected, isInternetReachable, refresh);
-    },[isConnected, isInternetReachable]);
-
-    useEffect(() => {
         if(token !== null) {
             SplashScreen.hideAsync();
         }
