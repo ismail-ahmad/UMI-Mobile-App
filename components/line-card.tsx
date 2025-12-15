@@ -1,12 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native';
+import { DimensionValue, StyleSheet, Text, View } from 'react-native';
 type LineCardProps = {
     lineName: string,
     lineStatus: string,
     lineStatusColor: string,
     ProductionValue: string,
     lineStatusBackgroundColor: string,
-    progressBarBackgroundColor: string,
-    progressBarWidth: string | number,
+    progressBarBackgroundColor?: string,
+    progressBarWidth?: DimensionValue,
     Efficiency: string,
     OEE: string,
     Achievement: string,

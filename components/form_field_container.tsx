@@ -1,9 +1,9 @@
 import { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 
-export default function FormFieldContainer({children}: {children:ReactNode}){
+export default function FormFieldContainer({children, style}: {children:ReactNode; style?: {};}){
     return(
-        <View style={[styles.View]}>
+        <View style={[styles.View, style]}>
             {children}
         </View>
     );
@@ -11,7 +11,6 @@ export default function FormFieldContainer({children}: {children:ReactNode}){
 
 const styles = StyleSheet.create({
     View: {
-        flexWrap: 'wrap',
         flexDirection: 'row',
         justifyContent: 'center',
         gap: 18,

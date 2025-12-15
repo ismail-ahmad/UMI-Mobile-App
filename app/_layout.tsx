@@ -6,8 +6,10 @@ import { Stack } from "expo-router";
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from "react";
 import { Platform, View } from "react-native";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function RootLayout() {
+  const safeArea = useSafeAreaInsets();
 useEffect(() => {
 
   const applyAndroidNavBar = async () => {

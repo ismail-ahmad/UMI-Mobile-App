@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native';
+import Heading from '@/components/heading';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
@@ -6,7 +7,7 @@ export default function Report(){
     const safeArea = useSafeAreaInsets();
     return(
         <View style={[styles.mainView]}>
-                <Text style={[styles.text]}>Form</Text>
+                <Heading text='Forms'></Heading>
         </View>
     );
 }

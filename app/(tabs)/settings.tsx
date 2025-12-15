@@ -1,18 +1,18 @@
 import { useAuth } from '@/components/authContext';
 import Button from '@/components/button';
 import Heading from '@/components/heading';
-import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import MainWrapper from '@/components/main_wrapper';
+import { StyleSheet } from 'react-native';
+
 
 export default function Home(){
-    const safeArea = useSafeAreaInsets();
     const { logout } = useAuth();
   
     return(
-        <View style={[styles.home, {paddingTop: safeArea.top + 32}]}>
+        <MainWrapper style={{justifyContent: 'space-between'}}>
           <Heading text='Settings' />
           <Button text='logout' onPressFunction={() => {logout()}} />
-        </View>
+        </MainWrapper>
     );
 }
 const styles = StyleSheet.create({

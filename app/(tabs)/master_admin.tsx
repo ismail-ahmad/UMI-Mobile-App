@@ -1,25 +1,20 @@
-import { StyleSheet, Text, View } from 'react-native';
+import FormField from '@/components/form_field';
+import FormFieldContainer from '@/components/form_field_container';
+import MainWrapper from '@/components/main_wrapper';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 
 export default function MasterAdmin(){
     return(
-        <View style={[styles.mainView]}>
-                <Text style={[styles.text]}>Master Admin</Text>
-        </View>
+        <MainWrapper>
+                <FormFieldContainer style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center', flex: 1}}>
+                    <FormField text='Add New User' route={'/form'}>
+                        <MaterialIcons size={28} name='person-add' color='white' />
+                    </FormField>
+                    <FormField text='Add New User' route={'/form'}>
+                        <MaterialIcons size={28} name='person-add' color='white' />
+                    </FormField>
+                </FormFieldContainer>
+        </MainWrapper>
     );
 }
-const styles = StyleSheet.create({
-    mainView: {
-        flex: 1,
-        backgroundColor: 'black',
-        justifyContent: 'center',
-        alignContent: 'center'
-    },
-    text: {
-        color: 'white',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        textAlign: 'center',
-        fontSize: 28,
-    }
-});

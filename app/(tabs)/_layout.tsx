@@ -1,6 +1,5 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Tabs } from "expo-router";
 
 
@@ -35,21 +34,21 @@ export default function TabsLayout(){
           name="admin"
           options={{
             title: 'Supervisor',
-            tabBarIcon: ({ color, focused }) => <MaterialCommunityIcons size={25} name={focused ? 'account-supervisor-outline' : 'account-supervisor'} color={color} />
+            tabBarIcon: ({ color }) => <MaterialCommunityIcons size={25} name={ 'account-supervisor'} color={color} />
           }}
         />
         <Tabs.Screen
           name="master_admin"
           options={{
             title: 'Admin',
-            tabBarIcon: ({ color }) => <MaterialIcons size={25} name='admin-panel-settings' color={color} />
+            tabBarIcon: ({ color }) => <MaterialCommunityIcons size={25} name={ 'shield-account'} color={color} />
           }}
         />
         <Tabs.Screen
           name="settings"
           options={{
             title: 'Settings',
-            tabBarIcon: ({ color, focused }) => <MaterialCommunityIcons size={25} name={ focused ? 'account-outline' : 'account' } color={color} />
+            tabBarIcon: ({ color }) => <MaterialCommunityIcons size={25} name={ 'account' } color={color} />
           }}
         />
         </Tabs>

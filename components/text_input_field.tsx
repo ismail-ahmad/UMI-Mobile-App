@@ -8,7 +8,7 @@ type formFieldProps = {
     value: string
 }
 
-export default function FormField({placeHolder, placeholderTextColor, secureText, onChangeText, value}: formFieldProps) {
+export default function TextInputField({placeHolder, placeholderTextColor, secureText, onChangeText, value}: formFieldProps) {
     return(
             <TextInput placeholder={placeHolder} secureTextEntry={secureText ? secureText : false} onChangeText={onChangeText} value={value} placeholderTextColor={placeholderTextColor ? placeholderTextColor : 'grey'} style={[styles.inputField]}></TextInput>
     );

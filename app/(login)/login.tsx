@@ -1,7 +1,7 @@
 import { useAuth } from '@/components/authContext';
 import Button from '@/components/button';
-import FormField from '@/components/form-field';
 import Heading from '@/components/heading';
+import InputTextField from '@/components/text_input_field';
 import { Redirect } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -17,8 +17,8 @@ export default function App(){
          <View style={[styles.Container, styles.LayoutFrame]}>
             <Heading text='Concept' />
             <View style={styles.fields}>
-                <FormField value={email} onChangeText={(text) => {setEmail(text.toLowerCase())}} placeHolder='Email'/>
-                <FormField value={password} onChangeText={(text) => {
+                <InputTextField value={email} onChangeText={(text) => {setEmail(text.toLowerCase())}} placeHolder='Email'/>
+                <InputTextField value={password} onChangeText={(text) => {
                     setPassword(text);
                 }} placeHolder='Password' secureText={true} />
             </View>
