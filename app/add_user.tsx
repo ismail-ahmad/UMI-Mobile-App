@@ -20,7 +20,7 @@ export default function AddUser(){
     const [name, setName] = useState<string>('');
     const [workId, setWorkId] = useState<string>('');
     const [email, setEmail] = useState<string>('');
-    const [companyValue, setCompanyValues] = useState<string|null> (null);
+    const [companyValues, setCompanyValues] = useState<string|null> (null);
     const [companyOpen, setCompanyOpen] = useState<boolean> (false);
     const [companyItems, setCompanyItems] = useState<{label: string; value: string | number}[]>([]);
     useEffect(() => {
@@ -58,7 +58,7 @@ export default function AddUser(){
 
                     <DropDown 
                       open={companyOpen}
-                      value={companyValue}
+                      value={companyValues}
                       items={companyItems}
                       setOpen={setCompanyOpen}
                       setValue={setCompanyValues}
