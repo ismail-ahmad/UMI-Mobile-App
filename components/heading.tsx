@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 500,
         textAlign: 'center',
-        fontStyle: 'italic'
+        fontStyle: 'italic',
+        padding: 16
     }
 });

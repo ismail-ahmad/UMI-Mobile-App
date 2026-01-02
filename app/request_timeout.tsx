@@ -15,6 +15,8 @@ export default function Report(){
                     console.log(route);
                     if(route === 'auth'){
                         router.replace('/');
+                    } else if(route === 'new_client_request') {
+                        router.replace('/addClient');
                     }else {
                         router.replace(`/${route}` as any);
                         console.log('not yet handling confidently, might take a look at me!');

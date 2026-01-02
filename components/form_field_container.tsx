@@ -11,9 +11,8 @@ export default function FormFieldContainer({children, style}: {children:ReactNod
 
 const styles = StyleSheet.create({
     View: {
-        flexDirection: 'row',
+        flexDirection: 'column',
+        width: '100%',
         justifyContent: 'center',
-        gap: 18,
-        paddingTop: 28
     }
 });

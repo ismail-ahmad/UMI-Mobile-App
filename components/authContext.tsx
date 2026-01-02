@@ -18,7 +18,7 @@ interface AuthContextProps {
         headers?: Record<string, string>,
         body?: string
     }
-) => Promise<Record<string, any> | {ok?: boolean; status?: number; message?: string;}>;
+) => Promise<Record<string, any> | {ok?: boolean; status?: number; data?: Record<string, any> | Record<string, any>[]; message?: string;}>;
     login: loginProps;
     logout: () => void ;
     getNewActiveToken: () => Promise<boolean | undefined>;
@@ -27,7 +27,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps>({
     isAuthenticated: null,
     isLoading: null,
-    apiCall: async (url, options) => {return {ok: false, status: 500, message: 'Not Initialized!'} },
+    apiCall: async (url, options) => {return {ok: false, status: 500, data: {}, message: 'Not Initialized!'} },
     login: (email, password) => {},
     logout: async() => {},
     getNewActiveToken: async() => false
